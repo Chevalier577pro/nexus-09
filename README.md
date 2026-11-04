@@ -38,6 +38,8 @@ Tous les chemins sont relatifs : aucune modification n'est nécessaire pour un p
 - **Transmissions** : trois archives narratives avec synthèse vocale française.
 - **Paysage sonore génératif** : créé en direct avec Web Audio, activé uniquement par l'utilisateur.
 - **Partage public** : API de partage native ou copie du lien.
+- **Version mobile dédiée** : navigation inférieure, cartes à faire glisser, commandes tactiles de déplacement et affichage adapté aux encoches.
+- **Application installable (PWA)** : ajout à l’écran d’accueil, plein écran et fonctionnement hors ligne après la première visite.
 - Responsive, navigation clavier, réduction des animations selon les préférences système.
 
 WebXR nécessite HTTPS (fourni par GitHub Pages) et un matériel/navigateur compatible. Sans casque, le bouton ouvre automatiquement le mode immersif 3D. La synthèse vocale dépend des voix installées sur l'appareil.

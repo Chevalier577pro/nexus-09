@@ -30,7 +30,7 @@ $$('.reveal:not(.hero .reveal)').forEach(el => revealObserver.observe(el));
 const sections = $$('.page-section');
 const navObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
-    if (entry.isIntersecting) $$('.desktop-nav a').forEach(a => a.classList.toggle('active', a.hash === `#${entry.target.id}`));
+    if (entry.isIntersecting) $$('.desktop-nav a, .mobile-nav a').forEach(a => a.classList.toggle('active', a.hash === `#${entry.target.id}`));
   });
 }, { rootMargin: '-40% 0px -50% 0px' });
 sections.forEach(s => navObserver.observe(s));
@@ -138,7 +138,10 @@ $('#sound-toggle').addEventListener('click', async () => {
   masterGain.gain.linearRampToValueAtTime(soundActive ? .7 : 0, audioContext.currentTime + 1);
   $('#sound-toggle').setAttribute('aria-pressed', soundActive);
   $('#sound-toggle').setAttribute('aria-label', soundActive ? 'Couper le son' : 'Activer le son');
+  $('#mobile-sound').setAttribute('aria-pressed', soundActive);
+  $('#mobile-sound').setAttribute('aria-label', soundActive ? 'Couper le son' : 'Activer le son');
 });
+$('#mobile-sound').addEventListener('click', () => $('#sound-toggle').click());
 
 // ---------- Univers WebGL / WebXR ----------
 const canvas = $('#universe');
@@ -240,6 +243,16 @@ addEventListener('keydown', e => {
   if (e.code === 'Escape' && portalActive) setPortal(false);
 });
 addEventListener('keyup', e => keys[e.code] = false);
+$$('[data-move]').forEach(button => {
+  const release = e => { keys[button.dataset.move] = false; button.classList.remove('pressed'); if (e) e.preventDefault(); };
+  button.addEventListener('pointerdown', e => {
+    e.preventDefault(); button.setPointerCapture(e.pointerId);
+    keys[button.dataset.move] = true; button.classList.add('pressed');
+  });
+  button.addEventListener('pointerup', release);
+  button.addEventListener('pointercancel', release);
+  button.addEventListener('lostpointercapture', release);
+});
 canvas.addEventListener('pointerdown', e => { if (portalActive) { dragging = true; lastX = e.clientX; lastY = e.clientY; canvas.setPointerCapture(e.pointerId); } });
 canvas.addEventListener('pointerup', () => dragging = false);
 canvas.addEventListener('pointermove', e => {
@@ -323,3 +336,8 @@ renderer.setAnimationLoop(() => {
   }
   renderer.render(scene, camera);
 });
+
+// Application mobile installable et consultations hors ligne.
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname))) {
+  addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
